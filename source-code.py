@@ -84,7 +84,7 @@ def main():
     input()
     os.system("cls")
 
-    installer_pattern = r"^python-\d\.\d{1,}(\.\d{1,})?.*(-arm64|-amd64)?\.exe$"
+    installer_pattern = r"^python-\d\.\d{1,}(\.\d{1,})?.*(-arm64|-amd64)?(\.exe|\.msi)$"
     filelist = soup2.find_all("a",string=re.compile(installer_pattern))
 
     for i,elm in enumerate(filelist):
