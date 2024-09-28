@@ -2,7 +2,9 @@ from packaging.version import Version
 from bs4 import BeautifulSoup
 import requests
 import keyboard
+import _thread
 import time
+import sys
 import os
 import re
 
@@ -22,6 +24,7 @@ def main():
     []  [][][] [][][][][]     []                    []     []      [] [][][][][]           []                []
     []      [] []             []                    []     []      [] []                   []               []
     [][][][][] [][][][][]     []                    []     []      [] [][][][][]           []          [][][]
+    v1.0.1
     """)
     time.sleep(1)
     os.system("cls")
@@ -43,8 +46,10 @@ def main():
 
         if key == "down":
             select+=1
+            time.sleep(0.05)
         elif key == "up":
             select-=1
+            time.sleep(0.05)
         elif key == "3":
             try:
                 select = versions.index(input("バージョンを検索 >> "))
@@ -60,6 +65,7 @@ def main():
             else:
                 reverse = True
             versions = sorted([elm.text.replace("/","") for elm in soup.find_all("a",href=re.compile(r"^3\.\d{1,}(\.\d{1,})?/"))], key=Version, reverse=reverse)
+            time.sleep(0.05)
         elif key == "enter":
             break
         else:
@@ -78,20 +84,24 @@ def main():
     input()
     os.system("cls")
 
-    installer_pattern = r"^python-\d\.\d{1,}(\.\d{1,})?(-arm64|-amd64)?\.exe$"
+    installer_pattern = r"^python-\d\.\d{1,}(\.\d{1,})?.*(-arm64|-amd64)?\.exe$"
     filelist = soup2.find_all("a",string=re.compile(installer_pattern))
 
     for i,elm in enumerate(filelist):
         print(i,elm.text)
 
-    file_number = int(input(f"インストーラーを選択 (0-{len(filelist)-1}) >> "))
+    filenumber = int(input(f"インストーラーを選択 (0-{len(filelist)-1}) >> "))
     
-    file = requests.get(f"https://www.python.org/ftp/python/{versions[select]}/{filelist[file_number].text}")
+    file = requests.get(f"https://www.python.org/ftp/python/{versions[select]}/{filelist[filenumber].text}")
 
-    with open(filelist[file_number].text,"wb+") as f:
+    filepath = os.path.join(os.getenv("temp"),filelist[filenumber].text)
+    with open(filepath,"wb+") as f:
         f.write(file.content)
     
-    os.system(filelist[file_number].text)
+    _thread.start_new_thread(lambda:os.system(filepath),())
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    finally:
+        sys.exit()
