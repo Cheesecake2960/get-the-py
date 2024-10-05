@@ -2,7 +2,6 @@ from packaging.version import Version
 from bs4 import BeautifulSoup
 import requests
 import keyboard
-import _thread
 import time
 import sys
 import os
@@ -24,7 +23,7 @@ def main():
     []  [][][] [][][][][]     []                    []     []      [] [][][][][]           []                []
     []      [] []             []                    []     []      [] []                   []               []
     [][][][][] [][][][][]     []                    []     []      [] [][][][][]           []          [][][]
-    v1.0.1
+    v1.0.2
     """)
     time.sleep(1)
     os.system("cls")
@@ -84,11 +83,29 @@ def main():
     input()
     os.system("cls")
 
-    installer_pattern = r"^python-\d\.\d{1,}(\.\d{1,})?.*(-arm64|-amd64)?(\.exe|\.msi)$"
-    filelist = soup2.find_all("a",string=re.compile(installer_pattern))
+    print("""
+検索方法:
+    1.インストーラーのみ表示する (おすすめの方法)
+        exeファイルのみ表示します。
+    2.すべて表示
+        使用できるオプションすべて表示します。
+    """)
+    answer = int(input("検索方法を選択してください (1 / 2) >> "))
 
-    for i,elm in enumerate(filelist):
-        print(i,elm.text)
+    if answer == 1:
+        installer_pattern = r"^python-\d\.\d{1,}(\.\d{1,})?.*(-arm64|-amd64)?(\.exe|\.msi)$"
+        filelist = soup2.find_all("a",string=re.compile(installer_pattern))
+
+        for i,elm in enumerate(filelist):
+            print(i,elm.text)
+            time.sleep(0.05)
+    elif answer == 2:
+        installer_pattern = r"^(p|P)ython-.*(msi|exe|tgz|pkg)$"
+        filelist = soup2.find_all("a",string=re.compile(installer_pattern))
+
+        for i,elm in enumerate(filelist):
+            print(i,elm.text)
+            time.sleep(0.05)
 
     filenumber = int(input(f"インストーラーを選択 (0-{len(filelist)-1}) >> "))
     
@@ -98,7 +115,7 @@ def main():
     with open(filepath,"wb+") as f:
         f.write(file.content)
     
-    _thread.start_new_thread(lambda:os.system(filepath),())
+    os.system(filepath)
 
 if __name__ == "__main__":
     try:
