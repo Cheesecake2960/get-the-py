@@ -12,4 +12,4 @@ Pythonインストール時に `Add python.exe to PATH` にチェックを入れ
 
 このアプリはPython公式のものではありません。
 
-Get the py --- version 1.0.1
+Get the py --- version 1.0.2
