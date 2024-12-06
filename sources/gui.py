@@ -20,13 +20,8 @@ version_comb=ttk.Combobox(root,values=tuple(versions))
 select_python_version = tk.Label(text="Select python version",font=("メイリオ",10))
 
 def download_and_run(event):
-    print("Installer selected")
-    debug_fileURL=f"https://www.python.org/ftp/python/{version}/{file_comb.get()}"
-    print(debug_fileURL)
-    file = requests.get(debug_fileURL)
-
+    file = requests.get(f"https://www.python.org/ftp/python/{version}/{file_comb.get()}")
     filepath = os.path.join(os.getenv("temp"),file_comb.get())
-    print(filepath)
 
     with open(filepath,"wb+") as f:
         f.write(file.content)
